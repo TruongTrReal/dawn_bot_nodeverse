@@ -1,0 +1,75 @@
+# ===========================================
+#        Application Configuration
+# ===========================================
+# This configuration file controls the core behavior and settings
+# of the application, including threading, email, and captcha services.
+
+# ==================
+# Core Settings
+# ==================
+# Essential application parameters that control basic functionality
+
+threads: 30                    # Number of worker threads for concurrent operations
+                              # Minimum: 1, Recommended: 10-50 based on system resources
+
+keepalive_interval: 120       # Keepalive signal frequency in seconds
+                             # Controls connection health monitoring
+
+referral_codes:              # List of referral codes for tracking and rewards
+  - ""                       # Add multiple codes as needed, one per line
+
+# ======================
+# Redirect Configuration
+# ======================
+# Email redirection and proxy settings for message handling
+
+redirect_settings:
+  enabled: false             # Master switch for mail redirection functionality
+  email: "test@gmail.com"    # Primary redirect email address
+  password: "password"       # Authentication credentials (store securely!)
+  imap_server: "imap.gmail.com"  # IMAP server for mail retrieval
+  use_proxy: true           # Enable proxy support for enhanced privacy
+
+# ====================
+# Captcha Integration
+# ====================
+# Settings for automated CAPTCHA solving services
+
+captcha_module: 2captcha     # Supported services:
+                            # - '2captcha': Primary service
+                            # - 'anticaptcha': Alternative service
+
+two_captcha_api_key: "ea1524eab3568ed800b37db33e929489"     # API authentication key for 2captcha service
+anti_captcha_api_key: ""    # API authentication key for anticaptcha service
+
+# ======================
+# Startup Configuration
+# ======================
+# Control application initialization timing
+
+delay_before_start:
+  min: 2                    # Minimum startup delay in seconds
+  max: 3                    # Maximum startup delay in seconds
+                           # Randomized between min and max values
+
+# ==============================
+# Email Provider Configuration
+# ==============================
+# Comprehensive list of IMAP server settings for major email providers
+
+imap_settings:
+  # Global Email Services
+  gmail.com: imap.gmail.com          # Google Mail - SSL required
+  yahoo.com: imap.mail.yahoo.com     # Yahoo Mail - SSL required
+  icloud.com: imap.mail.me.com       # Apple iCloud - 2FA may be required
+  tourzy.us: imap.bizflycloud.vn
+  veer.vn: mail.veer.vn
+  # Regional Email Services
+  mail.ru: imap.mail.ru              # Mail.ru - Popular in CIS regions
+
+  # European Services
+  gmx.com: imap.gmx.com              # GMX Mail - International
+  gmx.net: imap.gmx.net              # GMX Germany - Primary
+  gmx.de: imap.gmx.net               # GMX Germany - Alternative
+  onet.pl: imap.poczta.onet.pl       # Onet - Polish service
+  onet.com.pl: imap.poczta.onet.pl   # Onet - Alternative domain
