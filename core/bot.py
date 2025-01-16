@@ -513,10 +513,46 @@ class Bot(DawnExtensionAPI):
             logger.success(
                 f"Account: {self.account_data.email} | Successfully got user info"
             )
+            # Extract referral points (assuming referralPoint is a dictionary with a 'commission' value)
+            referral_points = user_info["referralPoint"].get("commission", 0)
+
+            # Extract reward points and sum them up
+            reward_points_data = user_info["rewardPoint"]
+            total_reward_points = (
+                reward_points_data.get("points", 0) +
+                reward_points_data.get("registerpoints", 0) +
+                reward_points_data.get("signinpoints", 0) +
+                reward_points_data.get("twitter_x_id_points", 0) +
+                reward_points_data.get("discordid_points", 0) +
+                reward_points_data.get("telegramid_points", 0) +
+                reward_points_data.get("bonus_points", 0) +
+                reward_points_data.get("epoch01", 0)
+            )
+
+            # Create dictionaries for referralPoint and rewardPoint
+            referral_point_dict = {"commission": referral_points}
+            reward_point_dict = {
+                "points": reward_points_data.get("points", 0),
+                "registerpoints": reward_points_data.get("registerpoints", 0),
+                "signinpoints": reward_points_data.get("signinpoints", 0),
+                "twitter_x_id_points": reward_points_data.get("twitter_x_id_points", 0),
+                "discordid_points": reward_points_data.get("discordid_points", 0),
+                "telegramid_points": reward_points_data.get("telegramid_points", 0),
+                "bonus_points": reward_points_data.get("bonus_points", 0),
+                "epoch01": reward_points_data.get("epoch01", 0),
+                "total_points": total_reward_points,
+                "email": self.account_data.email,
+            }
+
+            logger.success(
+                f"Account: {self.account_data.email} | Successfully got user info. "
+                f"Referral Points: {referral_points}, Reward Points: {total_reward_points}"
+            )
+
             return StatisticData(
                 success=True,
-                referralPoint=user_info["referralPoint"],
-                rewardPoint=user_info["rewardPoint"],
+                referralPoint=referral_point_dict,
+                rewardPoint=reward_point_dict
             )
 
         except SessionRateLimited:

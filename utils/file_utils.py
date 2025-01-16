@@ -43,13 +43,17 @@ class FileOperations:
             writer = AsyncWriter(f)
             await writer.writerow(
                 [
-                    "Email",
-                    "Referral Code",
-                    "Points",
-                    "Referral Points",
-                    "Total Points",
-                    "Registration Date",
-                    "Completed Tasks",
+                    "Account",
+                    "points",
+                    "registerpoints",
+                    "signinpoints",
+                    "twitter_x_id_points",
+                    "discordid_points",
+                    "telegramid_points",
+                    "bonus_points",
+                    "epoch01",
+                    "total_points",
+                    "commission"
                 ]
             )
 
@@ -97,23 +101,20 @@ class FileOperations:
 
                     if not data or not data["referralPoint"] or not data["rewardPoint"]:
                         return
-
+                    
                     await writer.writerow(
                         [
-                            data["referralPoint"]["email"],
-                            data["referralPoint"]["referralCode"],
+                            data["rewardPoint"]["email"],
                             data["rewardPoint"]["points"],
+                            data["rewardPoint"]["registerpoints"],
+                            data["rewardPoint"]["signinpoints"],
+                            data["rewardPoint"]["twitter_x_id_points"],
+                            data["rewardPoint"]["discordid_points"],
+                            data["rewardPoint"]["telegramid_points"],
+                            data["rewardPoint"]["bonus_points"],
+                            data["rewardPoint"]["epoch01"],
+                            data["rewardPoint"]["total_points"],
                             data["referralPoint"]["commission"],
-                            float(data["rewardPoint"]["points"])
-                            + float(data["referralPoint"]["commission"]),
-                            data["rewardPoint"]["registerpointsdate"],
-                            (
-                                True
-                                if data["rewardPoint"]["twitter_x_id_points"] == 5000
-                                and data["rewardPoint"]["discordid_points"] == 5000
-                                and data["rewardPoint"]["telegramid_points"] == 5000
-                                else False
-                            ),
                         ]
                     )
 
