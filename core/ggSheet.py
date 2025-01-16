@@ -38,7 +38,7 @@ async def update_points_by_email(spreadsheet_id="1U6o6jwqR0xqNi1QYDDCJvl9s-BeKxe
         worksheet = await asyncio.to_thread(sheet.worksheet, "Dawn")
         
         # Get headers and current date
-        headers = await asyncio.to_thread(worksheet.row_values, 1)
+        headers = await asyncio.to_thread(worksheet.row_values, 2)
         current_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         
         # Ensure required columns exist
@@ -53,8 +53,8 @@ async def update_points_by_email(spreadsheet_id="1U6o6jwqR0xqNi1QYDDCJvl9s-BeKxe
         point_total_col = headers.index('Point total') + 1
         
         # Get all rows from the sheet, passing the expected headers to avoid duplicates
-        expected_headers = ['Email', 'last update', 'last update point', 'Point total']
-        rows = await asyncio.to_thread(worksheet.get_all_records, empty2zero=False, head=1, expected_headers=expected_headers)
+        expected_headers = ['STT', 'App Token', 'AppId', 'Email']
+        rows = await asyncio.to_thread(worksheet.get_all_records, empty2zero=False, head=2, expected_headers=expected_headers)
 
         # Iterate through rows to find the matching email
         for i, row in enumerate(rows, start=2):
