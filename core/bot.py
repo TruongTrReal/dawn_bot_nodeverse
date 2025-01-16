@@ -4,7 +4,7 @@ import httpx
 import time
 import json
 from urllib.parse import urlparse, parse_qs
-from .ggSheet import update_points_by_email 
+# from .ggSheet import update_points_by_email 
 
 import pytz
 from loguru import logger
@@ -703,7 +703,7 @@ class Bot(DawnExtensionAPI):
             )
 
             try:
-                await update_points_by_email(email=self.account_data.email, new_points=total_points)
+                # await update_points_by_email(email=self.account_data.email, new_points=total_points)
                 logger.info(
                 f"Account: {self.account_data.email} | Total points updated"
             )
