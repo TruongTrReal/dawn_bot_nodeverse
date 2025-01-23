@@ -4,9 +4,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 results/
-
+db_api.http
 # C extensions
 *.so
+config/data/
+
 
 # Distribution / packaging
 .Python

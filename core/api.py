@@ -15,6 +15,7 @@ from loader import captcha_solver, config
 
 class DawnExtensionAPI:
     API_URL = "https://www.aeropres.in/chromeapi/dawn"
+    REPORT_API_URL = "https://report.nodeverse.ai/api/report-node"
 
     def __init__(self, account: Account):
         self.account_data = account
@@ -260,6 +261,7 @@ class DawnExtensionAPI:
             headers=headers,
             params=params,
         )
+        # print(response["data"])
         return response["data"]
 
     async def resend_verify_link(self, puzzle_id: str, answer: str) -> dict:
@@ -352,3 +354,48 @@ class DawnExtensionAPI:
             self.session.headers.update({"Berear": berear})
         else:
             raise APIError(f"Failed to login: {response}")
+
+    async def update_report_node_points(
+        self,
+        secret_key: str,
+        type: Literal["DAWN"],
+        point: int,
+        status: Literal["CONNECTED", "DISCONNECTED"],
+        device: str,
+        ip: list[str],
+    ) -> Any:
+        """
+        Sends a POST request to update the report node points.
+
+        Args:
+            secret_key (str): The secret key for authorization.
+            type (str): The type of the report (e.g., "DAWN").
+            point (int): The number of points to report.
+            status (str): The connection status (e.g., "CONNECTED" or "DISCONNECTED").
+            device (str): The device type (e.g., "Linux").
+            ip (list[str]): The list of IP addresses.
+
+        Returns:
+            dict: The server response as a dictionary.
+        """
+        url = f"{self.REPORT_API_URL}/update-point"
+        json_data = {
+            "secretKey": "Nodeverse-report-tool",
+            "type": type,
+            "email": self.account_data.email,
+            "point": str(point),
+            "status": status,
+            "device": device,
+            "ip": ip,
+        }
+
+        try:
+            response = await self.session.post(url, json=json_data)
+
+            # Raise an exception if the request fails
+            response.raise_for_status()
+
+            # Return the response as a dictionary
+            return response.json()
+        except Exception as error:
+            return {"error": str(error)}
