@@ -4,7 +4,6 @@ import httpx
 import time
 import json
 from urllib.parse import urlparse, parse_qs
-# from .ggSheet import update_points_by_email 
 
 import pytz
 from loguru import logger
@@ -487,6 +486,51 @@ class Bot(DawnExtensionAPI):
             )
 
         return
+    
+    async def update_report_node_points(
+        self,
+        secret_key: str,
+        type: Literal["DAWN"],
+        point: int,
+        status: Literal["CONNECTED", "DISCONNECTED"],
+        device: str,
+        ip_data: dict,
+    ) -> Any:
+        """
+        Sends a POST request to update the report node points.
+
+        Args:
+            secret_key (str): The secret key for authorization.
+            type (str): The type of the report (e.g., "DAWN").
+            point (int): The number of points to report.
+            status (str): The connection status (e.g., "CONNECTED" or "DISCONNECTED").
+            device (str): The device type (e.g., "Linux").
+            ip (list[str]): The list of IP addresses.
+
+        Returns:
+            dict: The server response as a dictionary.
+        """
+        url = f"{self.REPORT_API_URL}/update-point"
+        json_data = {
+            "secretKey": secret_key,
+            "type": type,
+            "email": self.account_data.email,
+            "point": point,
+            "status": status,
+            "device": device,
+            "ip": ip_data,
+        }
+
+        try:
+            response = await self.session.post(url, json=json_data)
+
+            # Raise an exception if the request fails
+            response.raise_for_status()
+
+            # Return the response as a dictionary
+            return response.json()
+        except Exception as error:
+            return {"error": str(error)}
 
     async def process_get_user_info(self) -> StatisticData:
         try:
@@ -725,26 +769,36 @@ class Bot(DawnExtensionAPI):
 
             user_info = await self.user_info()
 
-            total_points = user_info['rewardPoint']['points'] 
-            + user_info['referralPoint']['commission']
-            + user_info['rewardPoint']['registerpoints'] 
-            + user_info['rewardPoint']['signinpoints'] 
-            + user_info['rewardPoint']['twitter_x_id_points']
-            + user_info['rewardPoint']['discordid_points']
-            + user_info['rewardPoint']['telegramid_points']
-            + user_info['rewardPoint']['bonus_points']
+            total_points = user_info['rewardPoint']['points'] + user_info['referralPoint']['commission'] + user_info['rewardPoint']['registerpoints'] + user_info['rewardPoint']['signinpoints'] + user_info['rewardPoint']['twitter_x_id_points']+ user_info['rewardPoint']['discordid_points']+ user_info['rewardPoint']['telegramid_points']+ user_info['rewardPoint']['bonus_points']
 
             logger.info(
                 f"Account: {self.account_data.email} | Total points earned: {total_points}"
             )
 
             try:
-                # await update_points_by_email(email=self.account_data.email, new_points=total_points)
+                ip_data={
+                        "proxy": str(self.account_data.proxy),
+                        "point": total_points,
+                        "status": "CONNECTED"
+                    }
+                # try to report node point here
+                report_response = await self.update_report_node_points(
+                    secret_key="Nodeverse-report-tool",
+                    type="DAWN",
+                    point=total_points,
+                    status="CONNECTED",
+                    device="Linux",
+                    ip_data=ip_data
+                )
+
+                logger.info(
+                    f"Account: {self.account_data.email} | Reported node points successfully: {report_response}"
+                )
                 logger.info(
                 f"Account: {self.account_data.email} | Total points updated"
             )
             except Exception as e:
-                logger.error(f"Account: {self.account_data.email} | Failed to update Google Sheet for account {self.account_data.email}: {e}")
+                logger.error(f"Account: {self.account_data.email} | Failed to report node point for account {self.account_data.email}: {e}")
 
         except Exception as error:
             logger.error(
